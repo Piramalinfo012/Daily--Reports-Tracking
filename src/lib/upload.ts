@@ -11,7 +11,7 @@ export async function uploadFile(
   base64Data: string,
   fileName: string,
   mimeType: string,
-  _folderId: string // No longer used for Cloudinary
+  _folderId?: string // No longer used for Cloudinary
 ): Promise<string> {
   // Cloudinary accepts base64 files in Data URI format
   const dataUri = `data:${mimeType || "application/octet-stream"};base64,${base64Data}`;

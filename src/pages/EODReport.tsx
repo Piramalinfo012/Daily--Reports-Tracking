@@ -11,7 +11,6 @@ import { fileToBase64, formatBytes, formatDisplayDate, genId, todayISO, formatTi
 import { Badge, Button, Card, EmptyState, Label, Spinner, Textarea } from "../components/ui";
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
-const DRIVE_FOLDER_ID = import.meta.env.VITE_DRIVE_FOLDER_ID;
 
 export default function EODReportPage() {
   const { user } = useAuth();
@@ -67,9 +66,8 @@ export default function EODReportPage() {
       let fileUrl = "";
       let fileName = "";
       if (file) {
-        if (!DRIVE_FOLDER_ID) throw new Error("Drive folder is not configured (VITE_DRIVE_FOLDER_ID).");
         const base64 = await fileToBase64(file);
-        fileUrl = await uploadFile(base64, file.name, file.type || "application/octet-stream", DRIVE_FOLDER_ID);
+        fileUrl = await uploadFile(base64, file.name, file.type || "application/octet-stream");
         fileName = file.name;
       }
 

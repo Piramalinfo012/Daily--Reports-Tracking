@@ -330,11 +330,7 @@ export default function MDReport() {
             return;
           }
           try {
-            const folderId = import.meta.env.VITE_DRIVE_FOLDER_ID;
-            if (!folderId) {
-              throw new Error("Drive folder not configured");
-            }
-            const fileUrl = await uploadFile(base64Data, file.name, file.type, folderId);
+            const fileUrl = await uploadFile(base64Data, file.name, file.type);
             setUrl(fileUrl);
             toast.success("File uploaded successfully");
           } catch (err) {
