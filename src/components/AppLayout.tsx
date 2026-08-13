@@ -19,7 +19,7 @@ export function AppLayout() {
   const meta = TITLES[location.pathname] ?? { title: "DailyOps", subtitle: "" };
 
   return (
-    <div className="surface-app flex h-screen overflow-hidden bg-ink-950">
+    <div className="surface-app flex h-[100dvh] overflow-hidden bg-ink-950">
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
       <div className="flex min-w-0 flex-1 flex-col">
