@@ -4,6 +4,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import { ErrorBoundary } from "./ErrorBoundary";
+import { BottomNav } from "./BottomNav";
 
 const TITLES: Record<string, { title: string; subtitle: string }> = {
   "/": { title: "Dashboard", subtitle: "Your day at a glance" },
@@ -24,7 +25,7 @@ export function AppLayout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar onMenuClick={() => setMobileOpen(true)} title={meta.title} subtitle={meta.subtitle} />
 
-        <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8">
+        <main className="flex-1 overflow-y-auto px-4 py-6 md:px-8 md:py-8 pb-24 md:pb-8">
             <div className="mx-auto w-full max-w-6xl animate-in fade-in slide-in-from-bottom-2 duration-300">
               <ErrorBoundary>
                 <Outlet />
@@ -36,6 +37,8 @@ export function AppLayout() {
           </footer>
         </main>
       </div>
+
+      <BottomNav />
     </div>
   );
 }

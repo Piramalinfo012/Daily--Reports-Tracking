@@ -960,86 +960,135 @@ export default function MDReport() {
           {filteredEntries.length === 0 ? (
             <EmptyState icon={<ClipboardList size={24} />} title="No matching entries" />
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-200 text-left text-sm">
-                <thead>
-                  <tr className="border-b border-ink-700/60 text-[11px] text-mist-500 dark:text-mist-400 font-semibold uppercase tracking-wide">
-                    <th className="py-2 pr-2 font-medium">Timestamp</th>
-                    <th className="py-2 pr-2 font-medium">Task Description</th>
-                    <th className="py-2 pr-2 font-medium">Working Person</th>
-                    <th className="py-2 pr-2 font-medium">Status</th>
-                    <th className="py-2 pr-2 font-medium">Remark</th>
-                    <th className="py-2 pr-2 font-medium">File Url</th>
-                    <th className="py-2 pr-2 font-medium">Completion Info</th>
-                    <th className="py-2 pr-2 font-medium text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredEntries.map((entry) => (
-                    <tr key={entry._id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/10 dark:hover:bg-ink-800/30">
-                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{formatTimestampIndian(entry.timestamp)}</td>
-                      <td className="py-2.5 pr-2 max-w-xs truncate text-ink-900 dark:text-white">{entry.workDescription}</td>
-                      <td className="py-2.5 pr-2 text-ink-800 dark:text-mist-200">{entry.workingPerson}</td>
-                      <td className="py-2.5 pr-2">
-                        <Badge tone={entry.category === "Completed" ? "teal" : entry.category === "Pending" ? "amber" : "slate"}>
-                          {entry.category}
-                        </Badge>
-                      </td>
-                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400 max-w-xs truncate">{entry.remarks || "—"}</td>
-                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
-                        {entry.attachmentUrl ? (
-                          <a
-                            href={entry.attachmentUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs"
-                          >
-                            <Paperclip size={12} /> View
-                          </a>
-                        ) : (
-                          "—"
+            <div className="w-full">
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-4">
+                {filteredEntries.map((entry) => (
+                  <div key={entry._id} className="border border-ink-200 dark:border-ink-800/60 rounded-xl p-4 space-y-3 bg-white/50 dark:bg-ink-900/20 shadow-sm">
+                    <div className="flex justify-between items-start gap-2">
+                      <span className="text-sm font-bold text-ink-900 dark:text-white leading-tight">{entry.workDescription}</span>
+                      <Badge tone={entry.category === "Completed" ? "teal" : entry.category === "Pending" ? "amber" : "slate"}>
+                        {entry.category}
+                      </Badge>
+                    </div>
+                    <div className="text-xs font-medium text-mist-600 dark:text-mist-400">
+                      {formatTimestampIndian(entry.timestamp)} • {entry.workingPerson}
+                    </div>
+                    
+                    {entry.remarks && (
+                      <div className="text-xs text-mist-500 dark:text-mist-400 bg-ink-50 dark:bg-ink-900/40 p-2 rounded-lg">
+                        <span className="font-semibold">Remark:</span> {entry.remarks}
+                      </div>
+                    )}
+                    
+                    {(entry.attachmentUrl || entry.completedDate || entry.completedRemark || entry.completedFileUrl) && (
+                      <div className="border-t border-ink-100 dark:border-ink-800/60 pt-3 mt-3 flex flex-col gap-2 text-xs">
+                        {entry.attachmentUrl && (
+                           <a href={entry.attachmentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:underline font-medium">
+                             <Paperclip size={12} /> View Initial File
+                           </a>
                         )}
-                      </td>
-                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
-                        {entry.completedDate && <div className="text-xs text-teal-600 dark:text-teal-400 mb-1">{formatTimestampIndian(entry.completedDate)}</div>}
-                        {entry.completedRemark && <div className="text-[11px] max-w-[120px] truncate mb-1" title={entry.completedRemark}>{entry.completedRemark}</div>}
+                        {entry.completedDate && <div className="text-teal-600 dark:text-teal-400 font-medium">Completed: {formatTimestampIndian(entry.completedDate)}</div>}
+                        {entry.completedRemark && <div className="text-ink-700 dark:text-mist-300 italic">"{entry.completedRemark}"</div>}
                         {entry.completedFileUrl && (
-                          <a href={entry.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs">
-                            <Paperclip size={12} /> View File
+                          <a href={entry.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:underline font-medium">
+                            <Paperclip size={12} /> View Completed File
                           </a>
                         )}
-                        {!entry.completedDate && !entry.completedRemark && !entry.completedFileUrl && "—"}
-                      </td>
-                      <td className="py-2.5 pr-2 flex gap-1.5 flex-wrap justify-end">
-                        <button
-                          onClick={() => handleEditEntry(entry)}
-                          disabled={entry._id === "__optimistic__"}
-                          title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
-                          className="px-2 py-1 text-xs font-medium rounded bg-blue-500/20 text-blue-700 dark:text-blue-300 hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => handleUpdateEntry(entry)}
-                          disabled={entry._id === "__optimistic__"}
-                          title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
-                          className="px-2 py-1 text-xs font-medium rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          Update
-                        </button>
-                        <button
-                          onClick={() => handleDeleteEntry(entry)}
-                          disabled={entry._id === "__optimistic__"}
-                          title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
-                          className="px-2 py-1 text-xs font-medium rounded bg-rose-500/20 text-rose-700 dark:text-rose-300 hover:bg-rose-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          Delete
-                        </button>
-                      </td>
+                      </div>
+                    )}
+
+                    <div className="flex gap-2 pt-2 border-t border-ink-100 dark:border-ink-800/60 mt-3 justify-end">
+                      <button onClick={() => handleEditEntry(entry)} disabled={entry._id === "__optimistic__"} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-500/10 text-blue-700 dark:text-blue-300 transition-colors">Edit</button>
+                      <button onClick={() => handleUpdateEntry(entry)} disabled={entry._id === "__optimistic__"} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 transition-colors">Update</button>
+                      <button onClick={() => handleDeleteEntry(entry)} disabled={entry._id === "__optimistic__"} className="px-3 py-1.5 text-xs font-medium rounded-lg bg-rose-500/10 text-rose-700 dark:text-rose-300 transition-colors">Delete</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full min-w-200 text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-ink-700/60 text-[11px] text-mist-500 dark:text-mist-400 font-semibold uppercase tracking-wide">
+                      <th className="py-2 pr-2 font-medium">Timestamp</th>
+                      <th className="py-2 pr-2 font-medium">Task Description</th>
+                      <th className="py-2 pr-2 font-medium">Working Person</th>
+                      <th className="py-2 pr-2 font-medium">Status</th>
+                      <th className="py-2 pr-2 font-medium">Remark</th>
+                      <th className="py-2 pr-2 font-medium">File Url</th>
+                      <th className="py-2 pr-2 font-medium">Completion Info</th>
+                      <th className="py-2 pr-2 font-medium text-right">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredEntries.map((entry) => (
+                      <tr key={entry._id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/10 dark:hover:bg-ink-800/30">
+                        <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{formatTimestampIndian(entry.timestamp)}</td>
+                        <td className="py-2.5 pr-2 max-w-xs truncate text-ink-900 dark:text-white">{entry.workDescription}</td>
+                        <td className="py-2.5 pr-2 text-ink-800 dark:text-mist-200">{entry.workingPerson}</td>
+                        <td className="py-2.5 pr-2">
+                          <Badge tone={entry.category === "Completed" ? "teal" : entry.category === "Pending" ? "amber" : "slate"}>
+                            {entry.category}
+                          </Badge>
+                        </td>
+                        <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400 max-w-xs truncate">{entry.remarks || "—"}</td>
+                        <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
+                          {entry.attachmentUrl ? (
+                            <a
+                              href={entry.attachmentUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs"
+                            >
+                              <Paperclip size={12} /> View
+                            </a>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                        <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
+                          {entry.completedDate && <div className="text-xs text-teal-600 dark:text-teal-400 mb-1">{formatTimestampIndian(entry.completedDate)}</div>}
+                          {entry.completedRemark && <div className="text-[11px] max-w-[120px] truncate mb-1" title={entry.completedRemark}>{entry.completedRemark}</div>}
+                          {entry.completedFileUrl && (
+                            <a href={entry.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs">
+                              <Paperclip size={12} /> View File
+                            </a>
+                          )}
+                          {!entry.completedDate && !entry.completedRemark && !entry.completedFileUrl && "—"}
+                        </td>
+                        <td className="py-2.5 pr-2 flex gap-1.5 flex-wrap justify-end">
+                          <button
+                            onClick={() => handleEditEntry(entry)}
+                            disabled={entry._id === "__optimistic__"}
+                            title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
+                            className="px-2 py-1 text-xs font-medium rounded bg-blue-500/20 text-blue-700 dark:text-blue-300 hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleUpdateEntry(entry)}
+                            disabled={entry._id === "__optimistic__"}
+                            title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
+                            className="px-2 py-1 text-xs font-medium rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            Update
+                          </button>
+                          <button
+                            onClick={() => handleDeleteEntry(entry)}
+                            disabled={entry._id === "__optimistic__"}
+                            title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
+                            className="px-2 py-1 text-xs font-medium rounded bg-rose-500/20 text-rose-700 dark:text-rose-300 hover:bg-rose-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </Card>
@@ -1089,54 +1138,103 @@ function WorkTable({
       {entries.length === 0 ? (
         <EmptyState icon={<ClipboardList size={24} />} title="No tasks yet" />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-140 text-left text-sm">
-            <thead>
-              <tr className="border-b border-ink-700/60 text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">
-                <th className="w-10 py-2 pr-2 font-medium">#</th>
-                <th className="py-2 pr-2 font-medium">Date</th>
-                <th className="py-2 pr-2 font-medium">Work description</th>
-                <th className="py-2 pr-2 font-medium">Working person</th>
-                <th className="py-2 pr-2 font-medium">Remarks</th>
-                {title === "Completed work" && <th className="py-2 pr-2 font-medium">Completed Details</th>}
-                {onMarkComplete && <th className="py-2 pr-2 font-medium">Action</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {entries.map((e, i) => (
-                <tr key={e._id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/10 dark:hover:bg-ink-800/30">
-                  <td className="py-2.5 pr-2 text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">{i + 1}</td>
-                  <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{formatTimestampIndian(e.timestamp)}</td>
-                  <td className="py-2.5 pr-2 text-ink-900 dark:text-white">{e.workDescription}</td>
-                  <td className="py-2.5 pr-2 text-ink-800 dark:text-mist-200">{e.workingPerson}</td>
-                  <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{e.remarks || "—"}</td>
-                  {title === "Completed work" && (
-                    <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
-                      {e.completedDate && <div className="text-xs text-teal-600 dark:text-teal-400 mb-1">{formatTimestampIndian(e.completedDate)}</div>}
-                      {e.completedRemark && <div className="text-sm text-ink-900 dark:text-white">{e.completedRemark}</div>}
-                      {e.completedFileUrl && (
-                        <a href={e.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs mt-1">
-                          <Paperclip size={12} /> View File
-                        </a>
-                      )}
-                      {!e.completedDate && !e.completedRemark && !e.completedFileUrl && "—"}
-                    </td>
-                  )}
-                  {onMarkComplete && e.category === "Pending" && (
-                    <td className="py-2.5 pr-2">
-                      <button
-                        onClick={() => onMarkComplete(e)}
-                        disabled={e._id === "__optimistic__"}
-                        className="px-2.5 py-1 text-xs font-medium rounded-lg bg-teal-500/20 text-teal-700 dark:text-teal-300 hover:bg-teal-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                      >
-                        Mark Done
-                      </button>
-                    </td>
-                  )}
+        <div className="w-full">
+          {/* Mobile Card View */}
+          <div className="md:hidden space-y-4">
+            {entries.map((e, i) => (
+              <div key={e._id} className="border border-ink-200 dark:border-ink-800/60 rounded-xl p-4 space-y-3 bg-white/50 dark:bg-ink-900/20 shadow-sm">
+                <div className="flex justify-between items-start gap-2">
+                  <span className="text-sm font-bold text-ink-900 dark:text-white leading-tight">
+                    <span className="text-mist-400 mr-1">#{i + 1}</span> {e.workDescription}
+                  </span>
+                </div>
+                <div className="text-xs font-medium text-mist-600 dark:text-mist-400">
+                  {formatTimestampIndian(e.timestamp)} • {e.workingPerson}
+                </div>
+                
+                {e.remarks && (
+                  <div className="text-xs text-mist-500 dark:text-mist-400 bg-ink-50 dark:bg-ink-900/40 p-2 rounded-lg">
+                    <span className="font-semibold">Remark:</span> {e.remarks}
+                  </div>
+                )}
+                
+                {title === "Completed work" && (e.completedDate || e.completedRemark || e.completedFileUrl) && (
+                  <div className="border-t border-ink-100 dark:border-ink-800/60 pt-3 mt-3 flex flex-col gap-2 text-xs">
+                    {e.completedDate && <div className="text-teal-600 dark:text-teal-400 font-medium">Completed: {formatTimestampIndian(e.completedDate)}</div>}
+                    {e.completedRemark && <div className="text-ink-700 dark:text-mist-300 italic">"{e.completedRemark}"</div>}
+                    {e.completedFileUrl && (
+                      <a href={e.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:underline font-medium">
+                        <Paperclip size={12} /> View Completed File
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {onMarkComplete && (
+                  <div className="flex pt-2 border-t border-ink-100 dark:border-ink-800/60 mt-3 justify-end">
+                    <button
+                      onClick={() => onMarkComplete(e)}
+                      disabled={e._id === "__optimistic__"}
+                      className="px-4 py-2 text-xs font-bold rounded-lg bg-teal-500/10 text-teal-700 dark:text-teal-300 transition-colors w-full sm:w-auto"
+                    >
+                      Mark Done
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full min-w-140 text-left text-sm">
+              <thead>
+                <tr className="border-b border-ink-700/60 text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">
+                  <th className="w-10 py-2 pr-2 font-medium">#</th>
+                  <th className="py-2 pr-2 font-medium">Date</th>
+                  <th className="py-2 pr-2 font-medium">Work description</th>
+                  <th className="py-2 pr-2 font-medium">Working person</th>
+                  <th className="py-2 pr-2 font-medium">Remarks</th>
+                  {title === "Completed work" && <th className="py-2 pr-2 font-medium">Completed Details</th>}
+                  {onMarkComplete && <th className="py-2 pr-2 font-medium">Action</th>}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {entries.map((e, i) => (
+                  <tr key={e._id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/10 dark:hover:bg-ink-800/30">
+                    <td className="py-2.5 pr-2 text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">{i + 1}</td>
+                    <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{formatTimestampIndian(e.timestamp)}</td>
+                    <td className="py-2.5 pr-2 text-ink-900 dark:text-white">{e.workDescription}</td>
+                    <td className="py-2.5 pr-2 text-ink-800 dark:text-mist-200">{e.workingPerson}</td>
+                    <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{e.remarks || "—"}</td>
+                    {title === "Completed work" && (
+                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
+                        {e.completedDate && <div className="text-xs text-teal-600 dark:text-teal-400 mb-1">{formatTimestampIndian(e.completedDate)}</div>}
+                        {e.completedRemark && <div className="text-sm text-ink-900 dark:text-white">{e.completedRemark}</div>}
+                        {e.completedFileUrl && (
+                          <a href={e.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs mt-1">
+                            <Paperclip size={12} /> View File
+                          </a>
+                        )}
+                        {!e.completedDate && !e.completedRemark && !e.completedFileUrl && "—"}
+                      </td>
+                    )}
+                    {onMarkComplete && (
+                      <td className="py-2.5 pr-2 text-right">
+                        <button
+                          onClick={() => onMarkComplete(e)}
+                          disabled={e._id === "__optimistic__"}
+                          className="px-2.5 py-1 text-xs font-medium rounded-lg bg-teal-500/20 text-teal-700 dark:text-teal-300 hover:bg-teal-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          Mark Done
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </Card>
