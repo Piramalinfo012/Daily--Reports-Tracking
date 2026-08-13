@@ -460,18 +460,18 @@ export default function MDReport() {
             className="flex-1 cursor-pointer hover:scale-105 transition-transform flex flex-col items-center justify-center py-12 gap-4 border-teal-500/30 bg-teal-500/5"
             onClick={() => setViewMode("ea")}
           >
-            <ShieldCheck size={48} className="text-teal-400 drop-shadow-md" />
-            <h3 className="text-lg font-bold text-teal-100 tracking-wider">EA REPORT</h3>
-            <p className="text-xs text-mist-400 text-center px-4">Executive Assistant Daily Work Log</p>
+            <ShieldCheck size={48} className="text-teal-600 dark:text-teal-400 drop-shadow-md" />
+            <h3 className="text-lg font-bold text-teal-700 dark:text-teal-100 tracking-wider">EA REPORT</h3>
+            <p className="text-xs text-mist-500 dark:text-mist-400 text-center px-4">Executive Assistant Daily Work Log</p>
           </Card>
           <Card 
             glow="blue" 
             className="flex-1 cursor-pointer hover:scale-105 transition-transform flex flex-col items-center justify-center py-12 gap-4 border-blue-500/30 bg-blue-500/5"
             onClick={() => setViewMode("employee")}
           >
-            <ClipboardList size={48} className="text-blue-400 drop-shadow-md" />
-            <h3 className="text-lg font-bold text-blue-100 tracking-wider">EMPLOYEE REPORT</h3>
-            <p className="text-xs text-mist-400 text-center px-4">View End-of-Day Reports submitted by all employees</p>
+            <ClipboardList size={48} className="text-blue-600 dark:text-blue-400 drop-shadow-md" />
+            <h3 className="text-lg font-bold text-blue-700 dark:text-blue-100 tracking-wider">EMPLOYEE REPORT</h3>
+            <p className="text-xs text-mist-500 dark:text-mist-400 text-center px-4">View End-of-Day Reports submitted by all employees</p>
           </Card>
         </div>
       </div>
