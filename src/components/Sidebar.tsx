@@ -71,7 +71,17 @@ export function Sidebar({ mobileOpen, onClose }: { mobileOpen: boolean; onClose:
 
       <div className="mx-3 mb-3 rounded-xl border border-ink-700/60 p-3">
         <div className="flex items-center gap-2.5">
-          <Avatar name={user?.name ?? "?"} color={user?.avatarColor} url={user?.avatarUrl} size={34} />
+          {user?.avatarUrl ? (
+            <div 
+              className="cursor-pointer hover:opacity-80 transition-opacity" 
+              onClick={() => window.open(user.avatarUrl, "_blank")}
+              title="View Profile Picture"
+            >
+              <Avatar name={user?.name ?? "?"} color={user?.avatarColor} url={user?.avatarUrl} size={34} />
+            </div>
+          ) : (
+            <Avatar name={user?.name ?? "?"} color={user?.avatarColor} size={34} />
+          )}
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium text-mist-100">{user?.name}</p>
             <p className="truncate text-[11px] text-mist-500">{user?.department || user?.role}</p>

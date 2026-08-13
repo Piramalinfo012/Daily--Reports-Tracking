@@ -919,17 +919,17 @@ export default function MDReport() {
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-8 mb-4">
         <div>
-          <h2 className="text-xl font-semibold ">All Entries (Data Table)</h2>
-          <p className="mt-1 text-sm opacity-50 text-[11px] font-semibold uppercase tracking-wide">Full data view with edit and delete options.</p>
+          <h2 className="text-xl font-semibold text-ink-900 dark:text-white">All Entries (Data Table)</h2>
+          <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">Full data view with edit and delete options.</p>
         </div>
         
-        <div className="flex p-1.5 bg-ink-900/60 rounded-xl border border-white/5 w-full md:w-auto overflow-x-auto hide-scrollbar">
+        <div className="flex p-1.5 bg-ink-900/10 dark:bg-ink-900/60 rounded-xl border border-white/5 w-full md:w-auto overflow-x-auto hide-scrollbar">
           {["All", "Completed", "Pending", "Nextday Priority"].map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
               className={`relative px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap outline-none ${
-                statusFilter === status ? "text-ink-950" : "opacity-60 text-[11px] sm:text-xs hover:text-mist-200"
+                statusFilter === status ? "text-ink-950" : "text-mist-500 dark:text-mist-400 hover:text-mist-900 dark:hover:text-mist-200"
               }`}
             >
               {statusFilter === status && (
@@ -937,8 +937,8 @@ export default function MDReport() {
                   className={`absolute inset-0 z-0 rounded-lg ${
                     status === "Completed" ? "bg-teal-400 shadow-[0_4px_12px_rgba(45,212,191,0.3)]" :
                     status === "Pending" ? "bg-amber-400 shadow-[0_4px_12px_rgba(251,146,60,0.3)]" :
-                    status === "Nextday Priority" ? "bg-mist-300 shadow-[0_4px_12px_rgba(203,213,225,0.3)]" :
-                    "bg-ink-700 shadow-[0_4px_12px_rgba(26,37,64,0.3)]"
+                    status === "Nextday Priority" ? "bg-mist-400 dark:bg-mist-300 shadow-[0_4px_12px_rgba(203,213,225,0.3)]" :
+                    "bg-mist-300 dark:bg-ink-700 shadow-[0_4px_12px_rgba(26,37,64,0.3)]"
                   }`}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -963,7 +963,7 @@ export default function MDReport() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-200 text-left text-sm">
                 <thead>
-                  <tr className="border-b border-ink-700/60 text-xs opacity-50 text-[11px] font-semibold uppercase tracking-wide">
+                  <tr className="border-b border-ink-700/60 text-[11px] text-mist-500 dark:text-mist-400 font-semibold uppercase tracking-wide">
                     <th className="py-2 pr-2 font-medium">Timestamp</th>
                     <th className="py-2 pr-2 font-medium">Task Description</th>
                     <th className="py-2 pr-2 font-medium">Working Person</th>
@@ -976,23 +976,23 @@ export default function MDReport() {
                 </thead>
                 <tbody>
                   {filteredEntries.map((entry) => (
-                    <tr key={entry._id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/30">
-                      <td className="py-2.5 pr-2 text-xs opacity-60 text-[11px] sm:text-xs">{formatTimestampIndian(entry.timestamp)}</td>
-                      <td className="py-2.5 pr-2  max-w-xs truncate">{entry.workDescription}</td>
-                      <td className="py-2.5 pr-2 opacity-80">{entry.workingPerson}</td>
+                    <tr key={entry._id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/10 dark:hover:bg-ink-800/30">
+                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{formatTimestampIndian(entry.timestamp)}</td>
+                      <td className="py-2.5 pr-2 max-w-xs truncate text-ink-900 dark:text-white">{entry.workDescription}</td>
+                      <td className="py-2.5 pr-2 text-ink-800 dark:text-mist-200">{entry.workingPerson}</td>
                       <td className="py-2.5 pr-2">
                         <Badge tone={entry.category === "Completed" ? "teal" : entry.category === "Pending" ? "amber" : "slate"}>
                           {entry.category}
                         </Badge>
                       </td>
-                      <td className="py-2.5 pr-2 opacity-60 text-[11px] sm:text-xs max-w-xs truncate">{entry.remarks || "—"}</td>
-                      <td className="py-2.5 pr-2 opacity-60 text-[11px] sm:text-xs">
+                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400 max-w-xs truncate">{entry.remarks || "—"}</td>
+                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
                         {entry.attachmentUrl ? (
                           <a
                             href={entry.attachmentUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-teal-400 hover:text-teal-300 hover:underline text-xs"
+                            className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs"
                           >
                             <Paperclip size={12} /> View
                           </a>
@@ -1000,11 +1000,11 @@ export default function MDReport() {
                           "—"
                         )}
                       </td>
-                      <td className="py-2.5 pr-2 opacity-60 text-[11px] sm:text-xs">
-                        {entry.completedDate && <div className="text-xs text-teal-400 mb-1">{formatTimestampIndian(entry.completedDate)}</div>}
+                      <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
+                        {entry.completedDate && <div className="text-xs text-teal-600 dark:text-teal-400 mb-1">{formatTimestampIndian(entry.completedDate)}</div>}
                         {entry.completedRemark && <div className="text-[11px] max-w-[120px] truncate mb-1" title={entry.completedRemark}>{entry.completedRemark}</div>}
                         {entry.completedFileUrl && (
-                          <a href={entry.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-400 hover:text-teal-300 hover:underline text-xs">
+                          <a href={entry.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs">
                             <Paperclip size={12} /> View File
                           </a>
                         )}
@@ -1015,7 +1015,7 @@ export default function MDReport() {
                           onClick={() => handleEditEntry(entry)}
                           disabled={entry._id === "__optimistic__"}
                           title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
-                          className="px-2 py-1 text-xs font-medium rounded bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="px-2 py-1 text-xs font-medium rounded bg-blue-500/20 text-blue-700 dark:text-blue-300 hover:bg-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           Edit
                         </button>
@@ -1023,7 +1023,7 @@ export default function MDReport() {
                           onClick={() => handleUpdateEntry(entry)}
                           disabled={entry._id === "__optimistic__"}
                           title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
-                          className="px-2 py-1 text-xs font-medium rounded bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="px-2 py-1 text-xs font-medium rounded bg-amber-500/20 text-amber-700 dark:text-amber-300 hover:bg-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           Update
                         </button>
@@ -1031,7 +1031,7 @@ export default function MDReport() {
                           onClick={() => handleDeleteEntry(entry)}
                           disabled={entry._id === "__optimistic__"}
                           title={entry._id === "__optimistic__" ? "Still syncing — try again in a moment" : undefined}
-                          className="px-2 py-1 text-xs font-medium rounded bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="px-2 py-1 text-xs font-medium rounded bg-rose-500/20 text-rose-700 dark:text-rose-300 hover:bg-rose-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           Delete
                         </button>
@@ -1046,8 +1046,8 @@ export default function MDReport() {
       )}
 
       <div>
-        <h2 className="text-2xl font-semibold ">Work Log by Category</h2>
-        <p className="mt-1 text-sm opacity-50 text-[11px] font-semibold uppercase tracking-wide">View tasks by completion status.</p>
+        <h2 className="text-2xl font-semibold text-ink-900 dark:text-white">Work Log by Category</h2>
+        <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">View tasks by completion status.</p>
       </div>
 
       {mdReports === null && !mdReportsError ? (
@@ -1092,7 +1092,7 @@ function WorkTable({
         <div className="overflow-x-auto">
           <table className="w-full min-w-140 text-left text-sm">
             <thead>
-              <tr className="border-b border-ink-700/60 text-xs opacity-50 text-[11px] font-semibold uppercase tracking-wide">
+              <tr className="border-b border-ink-700/60 text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">
                 <th className="w-10 py-2 pr-2 font-medium">#</th>
                 <th className="py-2 pr-2 font-medium">Date</th>
                 <th className="py-2 pr-2 font-medium">Work description</th>
@@ -1104,18 +1104,18 @@ function WorkTable({
             </thead>
             <tbody>
               {entries.map((e, i) => (
-                <tr key={e._id} className="border-b border-ink-800/60 last:border-0">
-                  <td className="py-2.5 pr-2 opacity-50 text-[11px] font-semibold uppercase tracking-wide">{i + 1}</td>
-                  <td className="py-2.5 pr-2 opacity-60 text-[11px] sm:text-xs text-xs">{formatTimestampIndian(e.timestamp)}</td>
-                  <td className="py-2.5 pr-2 ">{e.workDescription}</td>
-                  <td className="py-2.5 pr-2 opacity-80">{e.workingPerson}</td>
-                  <td className="py-2.5 pr-2 opacity-60 text-[11px] sm:text-xs">{e.remarks || "—"}</td>
+                <tr key={e._id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/10 dark:hover:bg-ink-800/30">
+                  <td className="py-2.5 pr-2 text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">{i + 1}</td>
+                  <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{formatTimestampIndian(e.timestamp)}</td>
+                  <td className="py-2.5 pr-2 text-ink-900 dark:text-white">{e.workDescription}</td>
+                  <td className="py-2.5 pr-2 text-ink-800 dark:text-mist-200">{e.workingPerson}</td>
+                  <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">{e.remarks || "—"}</td>
                   {title === "Completed work" && (
-                    <td className="py-2.5 pr-2 opacity-60 text-[11px] sm:text-xs">
-                      {e.completedDate && <div className="text-xs text-teal-400 mb-1">{formatTimestampIndian(e.completedDate)}</div>}
-                      {e.completedRemark && <div className="text-sm">{e.completedRemark}</div>}
+                    <td className="py-2.5 pr-2 text-[11px] sm:text-xs text-mist-500 dark:text-mist-400">
+                      {e.completedDate && <div className="text-xs text-teal-600 dark:text-teal-400 mb-1">{formatTimestampIndian(e.completedDate)}</div>}
+                      {e.completedRemark && <div className="text-sm text-ink-900 dark:text-white">{e.completedRemark}</div>}
                       {e.completedFileUrl && (
-                        <a href={e.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-400 hover:text-teal-300 hover:underline text-xs mt-1">
+                        <a href={e.completedFileUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs mt-1">
                           <Paperclip size={12} /> View File
                         </a>
                       )}
@@ -1127,7 +1127,7 @@ function WorkTable({
                       <button
                         onClick={() => onMarkComplete(e)}
                         disabled={e._id === "__optimistic__"}
-                        className="px-2.5 py-1 text-xs font-medium rounded-lg bg-teal-500/20 text-teal-300 hover:bg-teal-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="px-2.5 py-1 text-xs font-medium rounded-lg bg-teal-500/20 text-teal-700 dark:text-teal-300 hover:bg-teal-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       >
                         Mark Done
                       </button>
@@ -1226,6 +1226,7 @@ function EmployeeReportsView({ onBack }: { onBack: () => void }) {
   const [filterDate, setFilterDate] = useState("");
   const [filterName, setFilterName] = useState("");
   const [filterType, setFilterType] = useState<"All" | "Daily Plan" | "EOD Report">("All");
+  const [expandedEmployees, setExpandedEmployees] = useState<Set<string>>(new Set());
 
   const loading = allReports === null || allPlans === null;
   const error = repError || planError;
@@ -1270,6 +1271,47 @@ function EmployeeReportsView({ onBack }: { onBack: () => void }) {
       return true;
     });
   }, [unifiedList, filterDate, filterName, filterType]);
+
+  const grouped = useMemo(() => {
+    const groups: Record<string, {
+      userId: string;
+      total: number;
+      completed: number;
+      pending: number;
+      entries: typeof filtered;
+    }> = {};
+
+    filtered.forEach(item => {
+      if (!groups[item.userId]) {
+        groups[item.userId] = {
+          userId: item.userId,
+          total: 0,
+          completed: 0,
+          pending: 0,
+          entries: []
+        };
+      }
+      const g = groups[item.userId];
+      g.total++;
+      g.entries.push(item);
+
+      if (item.type === "Daily Plan") {
+        if (item.statusStr === "Completed") g.completed++;
+        else if (item.statusStr === "Pending" || item.statusStr === "In Progress") g.pending++;
+      }
+    });
+
+    return Object.values(groups).sort((a, b) => a.userId.localeCompare(b.userId));
+  }, [filtered]);
+
+  const toggleEmployee = (userId: string) => {
+    setExpandedEmployees((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
+      return next;
+    });
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
@@ -1325,6 +1367,7 @@ function EmployeeReportsView({ onBack }: { onBack: () => void }) {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-ink-700/60 text-xs opacity-50 font-semibold uppercase tracking-wide">
+                  <th className="py-2 pl-2 pr-2 w-8"></th>
                   <th className="py-2 pr-2">Date</th>
                   <th className="py-2 pr-2">Employee Name</th>
                   <th className="py-2 pr-2">Type</th>
@@ -1333,34 +1376,61 @@ function EmployeeReportsView({ onBack }: { onBack: () => void }) {
                   <th className="py-2 pr-2">Attachment</th>
                 </tr>
               </thead>
-              <tbody>
-                {filtered.map(r => (
-                  <tr key={r.id + r.type} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/30">
-                    <td className="py-2.5 pr-2 text-xs opacity-80 whitespace-nowrap">{formatDisplayDate(r.date)}</td>
-                    <td className="py-2.5 pr-2 font-medium text-teal-400">{r.userId}</td>
-                    <td className="py-2.5 pr-2">
-                      <Badge tone={r.type === "EOD Report" ? "blue" : "amber"}>{r.type}</Badge>
-                    </td>
-                    <td className="py-2.5 pr-2 text-xs">
-                      {r.type === "Daily Plan" ? (
-                         <span className={r.statusStr === "Completed" ? "text-teal-400" : r.statusStr === "Pending" ? "text-amber-400" : "text-mist-500"}>
-                           {r.statusStr}
-                         </span>
-                      ) : (
-                        <Badge tone="slate">{r.statusStr}</Badge>
-                      )}
-                    </td>
-                    <td className="py-2.5 pr-2 opacity-80 text-xs max-w-sm truncate" title={r.summary}>{r.summary}</td>
-                    <td className="py-2.5 pr-2 text-xs">
-                      {r.attachmentUrl ? (
-                        <a href={r.attachmentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-blue-400 hover:underline">
-                          <Paperclip size={12} /> View
-                        </a>
-                      ) : "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+              {grouped.map(group => {
+                const isExpanded = expandedEmployees.has(group.userId);
+                return (
+                  <tbody key={group.userId}>
+                    {/* Summary Row */}
+                    <tr 
+                      onClick={() => toggleEmployee(group.userId)}
+                      className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/30 cursor-pointer bg-ink-900/5 dark:bg-ink-900/40"
+                    >
+                      <td className="py-3 pl-2 pr-2 text-mist-400 font-bold">
+                        {isExpanded ? "▼" : "▶"}
+                      </td>
+                      <td className="py-3 pr-2 font-medium text-teal-600 dark:text-teal-400" colSpan={2}>
+                        {group.userId}
+                      </td>
+                      <td className="py-3 pr-2" colSpan={4}>
+                        <div className="flex gap-4 text-xs">
+                          <span className="text-mist-500 dark:text-mist-300">Total Entries: <b className="text-ink-900 dark:text-white">{group.total}</b></span>
+                          <span className="text-teal-600 dark:text-teal-400">Completed Plans: <b className="text-teal-700 dark:text-teal-300">{group.completed}</b></span>
+                          <span className="text-amber-600 dark:text-amber-400">Pending Plans: <b className="text-amber-700 dark:text-amber-300">{group.pending}</b></span>
+                        </div>
+                      </td>
+                    </tr>
+
+                    {/* Detail Rows */}
+                    {isExpanded && group.entries.map(r => (
+                      <tr key={r.id + r.type} className="border-b border-ink-800/20 last:border-0 hover:bg-ink-800/30 bg-ink-950/5 dark:bg-ink-950/20">
+                        <td className="py-2.5 pl-2 pr-2 text-xs text-mist-400 opacity-50 text-center">↳</td>
+                        <td className="py-2.5 pr-2 text-xs opacity-80 whitespace-nowrap">{formatDisplayDate(r.date)}</td>
+                        <td className="py-2.5 pr-2 font-medium text-teal-600/70 dark:text-teal-400/70">{r.userId}</td>
+                        <td className="py-2.5 pr-2">
+                          <Badge tone={r.type === "EOD Report" ? "blue" : "amber"}>{r.type}</Badge>
+                        </td>
+                        <td className="py-2.5 pr-2 text-xs">
+                          {r.type === "Daily Plan" ? (
+                            <span className={r.statusStr === "Completed" ? "text-teal-600 dark:text-teal-400" : r.statusStr === "Pending" ? "text-amber-600 dark:text-amber-400" : "text-mist-600 dark:text-mist-500"}>
+                              {r.statusStr}
+                            </span>
+                          ) : (
+                            <Badge tone="slate">{r.statusStr}</Badge>
+                          )}
+                        </td>
+                        <td className="py-2.5 pr-2 opacity-80 text-xs max-w-sm truncate" title={r.summary}>{r.summary}</td>
+                        <td className="py-2.5 pr-2 text-xs">
+                          {r.attachmentUrl ? (
+                            <a href={r.attachmentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline">
+                              <Paperclip size={12} /> View
+                            </a>
+                          ) : "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                );
+              })}
             </table>
           </div>
         )}
