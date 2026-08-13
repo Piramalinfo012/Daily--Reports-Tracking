@@ -31,8 +31,16 @@ app.get("/api/health", (_req, res) => res.json({ ok: true, ts: Date.now() }));
 app.use((_req, res) => res.status(404).json({ error: "Not found" }));
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`✅  API server running on http://localhost:${PORT}`);
+if (process.env.NODE_ENV !== "production" || process.env.VERCEL !== "1") {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`✅  API server running on http://localhost:${PORT}`);
+    });
   });
-});
+} else {
+  // On Vercel, just connect to the DB and export the app
+  // Mongoose will automatically buffer queries until the connection is established
+  connectDB().catch(console.error);
+}
+
+module.exports = app;
