@@ -7,7 +7,6 @@ const usersRouter = require("./routes/users");
 const plansRouter = require("./routes/plans");
 const reportsRouter = require("./routes/reports");
 const mdReportsRouter = require("./routes/mdReports");
-const uploadRouter = require("./routes/upload");
 const workingPersonsRouter = require("./routes/workingPersons");
 
 const app = express();
@@ -22,7 +21,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/plans", plansRouter);
 app.use("/api/reports", reportsRouter);
 app.use("/api/md-reports", mdReportsRouter);
-app.use("/api/upload", uploadRouter);
+// Removed /api/upload since frontend uploads directly to Cloudinary
 app.use("/api/working-persons", workingPersonsRouter);
 
 // ── Health check ──────────────────────────────────────────────────────────────

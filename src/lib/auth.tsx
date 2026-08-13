@@ -15,7 +15,7 @@ interface AuthContextValue {
   signup: (name: string, id: string, password: string, department: string) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
-  updateProfile: (patch: { name?: string; department?: string; password?: string }) => Promise<void>;
+  updateProfile: (patch: { name?: string; department?: string; password?: string; avatarUrl?: string }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);

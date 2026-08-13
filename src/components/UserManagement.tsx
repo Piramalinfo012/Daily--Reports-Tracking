@@ -29,7 +29,7 @@ export function UserManagement() {
 
   async function fetchUsers() {
     try {
-      const data = await apiGet("/api/users");
+      const data = await apiGet<User[]>("/api/users");
       setUsers(data);
     } catch (e) {
       toast.error("Failed to load users");

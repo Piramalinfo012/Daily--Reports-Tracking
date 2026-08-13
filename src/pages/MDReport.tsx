@@ -3,7 +3,6 @@ import {
   AlertCircle,
   CalendarDays,
   ClipboardList,
-  Download,
   FileSpreadsheet,
   FileText,
   Lock,
@@ -25,7 +24,6 @@ import { formatDisplayDate, formatTimestampIndian, genId, todayISO } from "../li
 import { Badge, Button, Card, EmptyState, Input, Label, Spinner } from "../components/ui";
 
 const MD_REPORT_PASSWORD = "9189";
-const UNLOCK_KEY = "dailyops.mdReportUnlocked";
 
 const CATEGORIES: { key: MdWorkCategory; label: string; tone: "teal" | "amber" | "slate" }[] = [
   { key: "Completed", label: "Completed work", tone: "teal" },
@@ -136,17 +134,7 @@ export default function MDReport() {
       .catch((e) => setPersonNamesError(e instanceof Error ? e.message : "Failed to load person list."));
   }, [unlocked]);
 
-  const distinctLogDates = useMemo(() => {
-    const set = new Set<string>();
-    (mdReports ?? []).forEach((r) => {
-      set.add(dateOf(r.timestamp));
-      if (r.category === "Completed" && r.completedDate) {
-        set.add(dateOf(r.completedDate));
-      }
-    });
-    set.add(today);
-    return [...set].sort().reverse();
-  }, [mdReports, today]);
+
 
   const entriesForSelectedDate = useMemo(
     () =>
@@ -164,12 +152,7 @@ export default function MDReport() {
 
   const daysLogged = useMemo(() => new Set((mdReports ?? []).map((r) => dateOf(r.timestamp))).size, [mdReports]);
 
-  const filteredPersonNames = useMemo(() => {
-    if (!personNames) return [];
-    const search = workingPerson.toLowerCase().trim();
-    if (!search) return personNames;
-    return personNames.filter((name) => name.toLowerCase().includes(search));
-  }, [personNames, workingPerson]);
+
 
   function handleUnlock(e: React.FormEvent) {
     e.preventDefault();

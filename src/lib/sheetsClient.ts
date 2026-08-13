@@ -121,14 +121,3 @@ export async function updateCell(
 export async function deleteRow(sheetName: string, rowIndex: number): Promise<void> {
   await post({ action: "delete", sheetName, rowIndex: String(rowIndex) });
 }
-
-export async function uploadFile(
-  base64Data: string,
-  fileName: string,
-  mimeType: string,
-  folderId: string,
-): Promise<string> {
-  const res = await post({ action: "uploadFile", base64Data, fileName, mimeType, folderId });
-  if (!res.fileUrl) throw new SheetsApiError("Upload succeeded but no file URL was returned");
-  return res.fileUrl;
-}
