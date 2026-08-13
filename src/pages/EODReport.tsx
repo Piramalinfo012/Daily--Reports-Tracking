@@ -7,7 +7,7 @@ import { plansCache, reportsCache, useSheetCache } from "../lib/dataCache";
 import { reportsRepo } from "../lib/repo";
 import { uploadFile } from "../lib/upload";
 import type { EODReport } from "../lib/types";
-import { fileToBase64, formatBytes, formatDisplayDate, genId, todayISO, formatTimestampIndian } from "../lib/utils";
+import { fileToBase64, formatBytes, formatDisplayDate, genId, todayISO } from "../lib/utils";
 import { Badge, Button, Card, EmptyState, Label, Spinner, Textarea } from "../components/ui";
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
