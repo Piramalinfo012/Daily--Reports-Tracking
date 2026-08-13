@@ -16,6 +16,19 @@ const PORT = process.env.PORT || 3001;
 app.use(cors({ origin: "*" }));
 app.use(express.json({ limit: "20mb" })); // large base64 file uploads
 
+// ── Vercel DB Connection ──────────────────────────────────────────────────────
+if (process.env.VERCEL === "1") {
+  app.use(async (req, res, next) => {
+    try {
+      await connectDB();
+      next();
+    } catch (err) {
+      console.error("Vercel DB Connection Error:", err);
+      res.status(500).json({ error: "Database connection failed" });
+    }
+  });
+}
+
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use("/api/users", usersRouter);
 app.use("/api/plans", plansRouter);
@@ -37,10 +50,6 @@ if (process.env.NODE_ENV !== "production" || process.env.VERCEL !== "1") {
       console.log(`✅  API server running on http://localhost:${PORT}`);
     });
   });
-} else {
-  // On Vercel, just connect to the DB and export the app
-  // Mongoose will automatically buffer queries until the connection is established
-  connectDB().catch(console.error);
 }
 
 module.exports = app;
