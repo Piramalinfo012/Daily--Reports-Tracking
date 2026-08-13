@@ -32,7 +32,7 @@ const CATEGORIES: { key: MdWorkCategory; label: string; tone: "teal" | "amber" |
 ];
 
 const selectClass =
-  "field-surface rounded-xl border border-ink-600 bg-ink-900/60 px-3 py-2.5 text-sm  outline-none focus:border-teal-400";
+  "field-surface rounded-xl border dark:border-ink-600 border-white/20 dark:bg-ink-900/60 px-3 py-2.5 text-sm outline-none focus:border-teal-400";
 
 function dateOf(timestamp: string): string {
   if (!timestamp) return "";

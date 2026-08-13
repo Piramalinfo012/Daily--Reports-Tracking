@@ -101,8 +101,8 @@ export function Input({ className, ...rest }: InputHTMLAttributes<HTMLInputEleme
     <input
       {...rest}
       className={clsx(
-        "field-surface w-full rounded-xl border border-ink-600 bg-ink-900/60 px-3.5 py-2.5 text-[15px] text-mist-100 placeholder:text-mist-500",
-        "outline-none transition-colors duration-150 focus:border-teal-400 focus:bg-ink-900",
+        "field-surface w-full rounded-xl border dark:border-ink-600 border-white/20 dark:bg-ink-900/60 px-3.5 py-2.5 text-[15px] text-mist-100 placeholder:text-mist-500",
+        "outline-none transition-colors duration-150 focus:border-teal-400 dark:focus:bg-ink-900 focus:bg-white/50",
         className,
       )}
     />
@@ -114,8 +114,8 @@ export function Textarea({ className, ...rest }: TextareaHTMLAttributes<HTMLText
     <textarea
       {...rest}
       className={clsx(
-        "field-surface w-full resize-none rounded-xl border border-ink-600 bg-ink-900/60 px-3.5 py-2.5 text-[15px] text-mist-100 placeholder:text-mist-500",
-        "outline-none transition-colors duration-150 focus:border-teal-400 focus:bg-ink-900",
+        "field-surface w-full resize-none rounded-xl border dark:border-ink-600 border-white/20 dark:bg-ink-900/60 px-3.5 py-2.5 text-[15px] text-mist-100 placeholder:text-mist-500",
+        "outline-none transition-colors duration-150 focus:border-teal-400 dark:focus:bg-ink-900 focus:bg-white/50",
         className,
       )}
     />
