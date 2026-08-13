@@ -1,0 +1,24 @@
+const router = require("express").Router();
+const EodReport = require("../models/EodReport");
+
+// GET /api/reports
+router.get("/", async (_req, res) => {
+  try {
+    const reports = await EodReport.find().sort({ createdAt: 1 }).lean();
+    res.json(reports);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST /api/reports
+router.post("/", async (req, res) => {
+  try {
+    const report = await EodReport.create(req.body);
+    res.status(201).json(report);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+module.exports = router;
