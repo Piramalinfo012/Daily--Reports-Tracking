@@ -43,7 +43,11 @@ export default function EODReportPage() {
   const tasksPlanned = plans?.length ?? 0;
   const tasksCompleted = plans?.filter((p) => p.status === "Completed").length ?? 0;
   const alreadySubmittedToday = useMemo(() => (reports ?? []).some((r) => r.date === today), [reports, today]);
-  const pastReports = useMemo(() => [...(reports ?? [])].sort((a, b) => (a.date < b.date ? 1 : -1)), [reports]);
+  const pastReports = useMemo(() => [...(allReports ?? [])].sort((a, b) => {
+    // Sort by date (descending), then by createdAt (descending) so newest is on top
+    if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+    return (a.createdAt || "") < (b.createdAt || "") ? 1 : -1;
+  }), [allReports]);
 
   function pickFile(f: File | null) {
     if (!f) return setFile(null);
@@ -320,7 +324,7 @@ export default function EODReportPage() {
                       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <p className="text-base font-bold text-ink-900 dark:text-white mb-0.5">{formatDisplayDate(r.date)}</p>
-                          <p className="text-xs text-mist-500 font-medium uppercase tracking-wider">Submitted Report</p>
+                          <p className="text-xs text-mist-500 font-medium uppercase tracking-wider">Submitted by {r.userId}</p>
                         </div>
                         <Badge tone="teal" className="text-[11px] px-3 py-1 bg-teal-100 text-teal-800 dark:bg-teal-500/20 dark:text-teal-300 border-0">
                           {r.tasksCompleted} / {r.tasksPlanned} Tasks Completed
