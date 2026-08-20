@@ -1337,7 +1337,9 @@ function EmployeeReportsView({ onBack }: { onBack: () => void }) {
         userId: r.userId,
         summary: r.summary,
         statusStr: `${r.tasksCompleted}/${r.tasksPlanned}`,
-        attachmentUrl: r.fileUrl
+        attachmentUrl: r.fileUrl,
+        completedAt: "",
+        notes: ""
       });
     }
     
@@ -1349,7 +1351,9 @@ function EmployeeReportsView({ onBack }: { onBack: () => void }) {
         userId: p.userId,
         summary: p.task,
         statusStr: p.status,
-        attachmentUrl: ""
+        attachmentUrl: "",
+        completedAt: p.completedAt,
+        notes: p.notes
       });
     }
     
@@ -1512,7 +1516,15 @@ function EmployeeReportsView({ onBack }: { onBack: () => void }) {
                             <Badge tone="slate">{r.statusStr}</Badge>
                           )}
                         </td>
-                        <td className="py-2.5 pr-2 opacity-80 text-xs max-w-sm truncate" title={r.summary}>{r.summary}</td>
+                        <td className="py-2.5 pr-2 opacity-80 text-xs max-w-sm" title={r.summary}>
+                          <div className="truncate">{r.summary}</div>
+                          {r.type === "Daily Plan" && r.statusStr === "Completed" && (r.completedAt || r.notes) && (
+                            <div className="text-[10px] mt-1 opacity-70 font-medium">
+                              {r.completedAt && <span className="mr-2 text-teal-600 dark:text-teal-400">Date: {r.completedAt.length > 10 ? formatTimestampIndian(r.completedAt) : r.completedAt}</span>}
+                              {r.notes && <span className="text-ink-600 dark:text-mist-400 italic">Remark: "{r.notes}"</span>}
+                            </div>
+                          )}
+                        </td>
                         <td className="py-2.5 pr-2 text-xs">
                           {r.attachmentUrl ? (
                             <a href={r.attachmentUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline">
