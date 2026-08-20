@@ -22,7 +22,7 @@ export function BottomNav() {
   });
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 glass bg-white/80 dark:bg-ink-950/80 border-t border-ink-200 dark:border-white/10 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.02)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.2)]">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 glass bg-white/95 dark:bg-ink-950/95 border-t border-ink-200 dark:border-white/10 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.02)] dark:shadow-[0_-4px_24px_rgba(0,0,0,0.2)]">
       <div className="flex items-center justify-around px-2 py-2">
         {visibleNavItems.map(({ to, label, icon: Icon, end }) => (
           <NavLink
