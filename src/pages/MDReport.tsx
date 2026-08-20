@@ -1438,7 +1438,7 @@ function EmployeeReportsView({ onBack }: { onBack: () => void }) {
             <select
               value={filterType}
               onChange={e => setFilterType(e.target.value as any)}
-              className={selectClass + " !py-1.5 !px-2 !text-xs !bg-ink-900"}
+              className={selectClass + " !py-1.5 !px-2 !text-xs"}
             >
               <option value="All">All Types</option>
               <option value="Daily Plan">Daily Plan</option>
