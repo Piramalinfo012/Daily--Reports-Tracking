@@ -15,6 +15,7 @@ export function BottomNav() {
   const { user } = useAuth();
 
   const visibleNavItems = NAV_ITEMS.filter((item) => {
+    if (user?.role === "Member" && item.label === "MD") return false;
     if (user?.role === "Admin") return true;
     const fullLabel = item.label === "Tracker" ? "Daily Tracker" : item.label === "EOD" ? "EOD Report" : item.label === "MD" ? "MD Report" : item.label;
     return user?.allowedPages?.includes(fullLabel) ?? true;

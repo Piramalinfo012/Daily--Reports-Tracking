@@ -16,6 +16,7 @@ export function Sidebar({ mobileOpen, onClose }: { mobileOpen: boolean; onClose:
   const { user, logout } = useAuth();
 
   const visibleNavItems = NAV_ITEMS.filter((item) => {
+    if (user?.role === "Member" && item.label === "MD Report") return false;
     if (user?.role === "Admin") return true;
     return user?.allowedPages?.includes(item.label) ?? true;
   });
@@ -104,7 +105,7 @@ export function Sidebar({ mobileOpen, onClose }: { mobileOpen: boolean; onClose:
 
       {/* Mobile drawer */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
+        <div className="fixed inset-0 z-[60] md:hidden">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
