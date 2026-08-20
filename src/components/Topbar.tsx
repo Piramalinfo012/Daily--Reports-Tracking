@@ -17,7 +17,7 @@ export function Topbar({ onMenuClick, title, subtitle }: { onMenuClick: () => vo
       <button
         onClick={onMenuClick}
         aria-label="Open menu"
-        className="rounded-lg p-2 text-mist-400 hover:bg-white/5 hover:text-mist-100 md:hidden cursor-pointer"
+        className="hidden rounded-lg p-2 text-mist-400 hover:bg-white/5 hover:text-mist-100 cursor-pointer"
       >
         <Menu size={20} />
       </button>
