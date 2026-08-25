@@ -429,18 +429,136 @@ export default function MDReport() {
       toast.error("No entries in the selected date range.");
       return;
     }
-    const doc = new jsPDF({ orientation: "landscape" });
-    doc.setFontSize(14);
-    doc.text("MD Reports", 14, 15);
-    doc.setFontSize(10);
-    doc.text(`${formatDisplayDate(startDate)} — ${formatDisplayDate(endDate)}`, 14, 21);
-    autoTable(doc, {
-      startY: 26,
-      head: [REPORT_COLUMNS],
-      body: entriesForSelectedDate.map(reportRow),
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [20, 184, 166] },
+
+    const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Header band
+    doc.setFillColor(15, 23, 42);
+    doc.rect(0, 0, pageWidth, 52, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("Piramal Petroleum", 24, 22);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.text("MD Reports", 24, 38);
+    doc.setFontSize(9);
+    doc.text(`${formatDisplayDate(startDate)} — ${formatDisplayDate(endDate)}`, pageWidth - 24, 22, { align: "right" });
+    doc.text(`Generated: ${new Date().toLocaleString("en-IN")}`, pageWidth - 24, 36, { align: "right" });
+    doc.setTextColor(0, 0, 0);
+
+    const pdfColumns = [
+      "#",
+      "Timestamp",
+      "Task Description",
+      "Working Person",
+      "Status",
+      "Remark",
+      "Attachment",
+      "Completed On",
+      "Completion File",
+      "Completion Remark",
+    ];
+
+    const attachmentLinks: (string | null)[] = [];
+    const completionLinks: (string | null)[] = [];
+    const attachmentColIndex = 6;
+    const completionColIndex = 8;
+    const statusColIndex = 4;
+
+    const body = entriesForSelectedDate.map((e, i) => {
+      attachmentLinks.push(e.attachmentUrl || null);
+      completionLinks.push(e.completedFileUrl || null);
+      return [
+        String(i + 1),
+        formatTimestampIndian(e.timestamp),
+        e.workDescription,
+        e.workingPerson,
+        e.category,
+        e.remarks || "-",
+        e.attachmentUrl ? "View file" : "-",
+        e.completedDate || "-",
+        e.completedFileUrl ? "View file" : "-",
+        e.completedRemark || "-",
+      ];
     });
+
+    autoTable(doc, {
+      startY: 66,
+      head: [pdfColumns],
+      body,
+      theme: "grid",
+      styles: {
+        fontSize: 8.5,
+        cellPadding: 5,
+        overflow: "linebreak",
+        valign: "middle",
+        lineColor: [226, 232, 240],
+        lineWidth: 0.5,
+        textColor: [30, 41, 59],
+      },
+      headStyles: {
+        fillColor: [13, 148, 136],
+        textColor: 255,
+        fontStyle: "bold",
+        fontSize: 9,
+        halign: "left",
+      },
+      alternateRowStyles: { fillColor: [244, 249, 248] },
+      columnStyles: {
+        0: { cellWidth: 22, halign: "center" },
+        1: { cellWidth: 70 },
+        2: { cellWidth: "auto" },
+        3: { cellWidth: 72 },
+        4: { cellWidth: 56, halign: "center" },
+        5: { cellWidth: 90 },
+        6: { cellWidth: 52, halign: "center" },
+        7: { cellWidth: 68 },
+        8: { cellWidth: 58, halign: "center" },
+        9: { cellWidth: 90 },
+      },
+      margin: { top: 66, left: 20, right: 20, bottom: 24 },
+      didParseCell: (data) => {
+        if (data.section === "body" && data.column.index === statusColIndex) {
+          const status = String(data.cell.raw);
+          data.cell.styles.fontStyle = "bold";
+          if (status === "Completed") data.cell.styles.textColor = [5, 150, 105];
+          else if (status === "Pending") data.cell.styles.textColor = [217, 119, 6];
+          else data.cell.styles.textColor = [37, 99, 235];
+        }
+        if (
+          data.section === "body" &&
+          (data.column.index === attachmentColIndex || data.column.index === completionColIndex) &&
+          String(data.cell.raw) === "View file"
+        ) {
+          data.cell.styles.textColor = [13, 148, 136];
+          data.cell.styles.fontStyle = "bold";
+        }
+      },
+      didDrawCell: (data) => {
+        if (data.section !== "body") return;
+        if (data.column.index === attachmentColIndex) {
+          const url = attachmentLinks[data.row.index];
+          if (url) doc.link(data.cell.x, data.cell.y, data.cell.width, data.cell.height, { url });
+        }
+        if (data.column.index === completionColIndex) {
+          const url = completionLinks[data.row.index];
+          if (url) doc.link(data.cell.x, data.cell.y, data.cell.width, data.cell.height, { url });
+        }
+      },
+    });
+
+    const pageCount = doc.getNumberOfPages();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(120, 120, 120);
+      doc.text("DailyOps · Piramal Petroleum", 24, pageHeight - 12);
+      doc.text(`Page ${i} of ${pageCount}`, pageWidth - 24, pageHeight - 12, { align: "right" });
+    }
+
     doc.save(`md-reports_${startDate}_to_${endDate}.pdf`);
     toast.success("PDF file downloaded");
   }
