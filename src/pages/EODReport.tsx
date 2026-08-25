@@ -1,5 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, CheckCircle2, File as FileIcon, Paperclip, Send, Upload, X, Target, Star, AlertTriangle, Clock, CalendarCheck } from "lucide-react";
+import { AlertCircle, CheckCircle2, File as FileIcon, Paperclip, Send, Upload, X, Target, Clock, CalendarCheck } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "../lib/auth";
@@ -8,7 +7,7 @@ import { reportsRepo } from "../lib/repo";
 import { uploadFile } from "../lib/upload";
 import type { EODReport } from "../lib/types";
 import { fileToBase64, formatBytes, formatDisplayDate, genId, todayISO } from "../lib/utils";
-import { Badge, Button, Card, EmptyState, Label, Spinner, Textarea } from "../components/ui";
+import { Badge, Button, Card, EmptyState, Input, Label, Spinner, Textarea } from "../components/ui";
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 
@@ -39,6 +38,8 @@ export default function EODReportPage() {
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [historyFrom, setHistoryFrom] = useState("");
+  const [historyTo, setHistoryTo] = useState("");
 
   const tasksPlanned = plans?.length ?? 0;
   const tasksCompleted = plans?.filter((p) => p.status === "Completed").length ?? 0;
@@ -48,6 +49,15 @@ export default function EODReportPage() {
     if (a.date !== b.date) return a.date < b.date ? 1 : -1;
     return (a.createdAt || "") < (b.createdAt || "") ? 1 : -1;
   }), [allReports]);
+  const filteredPastReports = useMemo(
+    () =>
+      pastReports.filter((r) => {
+        if (historyFrom && r.date < historyFrom) return false;
+        if (historyTo && r.date > historyTo) return false;
+        return true;
+      }),
+    [pastReports, historyFrom, historyTo],
+  );
 
   function pickFile(f: File | null) {
     if (!f) return setFile(null);
@@ -192,37 +202,6 @@ export default function EODReportPage() {
               />
             </div>
 
-            {/* Form Section 2: Highlights & Blockers Row */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-              <div className="space-y-2">
-                <Label htmlFor="highlights" className="flex items-center gap-2 text-ink-900 dark:text-mist-100 font-bold text-sm sm:text-base">
-                  <Star size={18} className="text-amber-500 dark:text-amber-400" /> Highlights / Wins
-                </Label>
-                <Textarea
-                  id="highlights"
-                  rows={3}
-                  value={highlights}
-                  onChange={(e) => setHighlights(e.target.value)}
-                  placeholder="Any notable achievements or call-outs?"
-                  className="shadow-sm"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="blockers" className="flex items-center gap-2 text-ink-900 dark:text-mist-100 font-bold text-sm sm:text-base">
-                  <AlertTriangle size={18} className="text-rose-500 dark:text-rose-400" /> Blockers / Pending
-                </Label>
-                <Textarea
-                  id="blockers"
-                  rows={3}
-                  value={blockers}
-                  onChange={(e) => setBlockers(e.target.value)}
-                  placeholder="What's holding you up, or carrying over to tomorrow?"
-                  className="shadow-sm border-rose-100 dark:border-rose-900/30 focus:border-rose-400 dark:focus:border-rose-400"
-                />
-              </div>
-            </div>
-
             {/* Form Section 3: Attachment */}
             <div className="space-y-2 pt-2 border-t border-ink-200 dark:border-white/5">
               <Label className="flex items-center gap-2 text-ink-900 dark:text-mist-100 font-bold text-sm sm:text-base mb-4 mt-4">
@@ -297,89 +276,130 @@ export default function EODReportPage() {
         </Card>
       )}
 
-      {/* Report History Timeline */}
+      {/* Report History */}
       <div className="pt-8">
-        <h3 className="mb-6 text-xl font-bold text-ink-900 dark:text-white flex items-center gap-2">
-          <Clock className="text-mist-400" size={24} /> Report Timeline
-        </h3>
-        
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-xl font-bold text-ink-900 dark:text-white flex items-center gap-2">
+            <Clock className="text-mist-400" size={24} /> Report History
+          </h3>
+          {pastReports.length > 0 && (
+            <Badge tone="teal" className="text-[11px] px-3 py-1 bg-teal-100 text-teal-800 dark:bg-teal-500/20 dark:text-teal-300 border-0">
+              {filteredPastReports.length} Submitted
+            </Badge>
+          )}
+        </div>
+
+        {pastReports.length > 0 && (
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <Input type="date" value={historyFrom} onChange={(e) => setHistoryFrom(e.target.value)} className="py-1 px-2 text-xs rounded-lg w-36" />
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-mist-500 dark:text-mist-400">to</span>
+            <Input type="date" value={historyTo} onChange={(e) => setHistoryTo(e.target.value)} className="py-1 px-2 text-xs rounded-lg w-36" />
+            {(historyFrom || historyTo) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setHistoryFrom("");
+                  setHistoryTo("");
+                }}
+                className="text-[11px] font-semibold uppercase tracking-wide text-teal-600 dark:text-teal-400 hover:underline"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        )}
+
         {loading ? null : pastReports.length === 0 ? (
           <EmptyState icon={<FileIcon size={32} />} title="No history available" subtitle="Your submitted EOD reports will appear here." />
+        ) : filteredPastReports.length === 0 ? (
+          <EmptyState icon={<FileIcon size={32} />} title="No reports in this range" subtitle="Try adjusting the date filter." />
         ) : (
-          <div className="relative border-l-2 border-ink-200 dark:border-ink-800 ml-4 md:ml-6 space-y-8 pb-4">
-            <AnimatePresence>
-              {pastReports.map((r, i) => (
-                <motion.div
-                  key={r._id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: Math.min(i * 0.05, 0.4), type: "spring", stiffness: 100 }}
-                  className="relative pl-6 md:pl-8 group"
-                >
-                  {/* Timeline dot */}
-                  <div className="absolute w-4 h-4 rounded-full bg-white dark:bg-ink-950 border-2 border-teal-500 dark:border-teal-400 -left-[9px] top-1.5 shadow-[0_0_0_4px_rgba(255,255,255,1)] dark:shadow-[0_0_0_4px_rgba(13,20,36,1)] group-hover:scale-125 transition-transform" />
-                  
-                  <Card className="hover:border-ink-300 dark:hover:border-white/10 transition-colors bg-white/40 dark:bg-ink-900/20 shadow-sm hover:shadow-md">
-                    <div className="p-4 sm:p-5">
-                      <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
-                        <div>
-                          <p className="text-base font-bold text-ink-900 dark:text-white mb-0.5">{formatDisplayDate(r.date)}</p>
-                          <p className="text-xs text-mist-500 font-medium uppercase tracking-wider">Submitted by {r.userId}</p>
-                        </div>
-                        <Badge tone="teal" className="text-[11px] px-3 py-1 bg-teal-100 text-teal-800 dark:bg-teal-500/20 dark:text-teal-300 border-0">
-                          {r.tasksCompleted} / {r.tasksPlanned} Tasks Completed
-                        </Badge>
+          <Card className="p-1 sm:p-2">
+            <div className="p-4 sm:p-5">
+              {/* Mobile Card View */}
+              <div className="md:hidden space-y-4">
+                {filteredPastReports.map((r) => (
+                  <div key={r._id} className="border border-ink-200 dark:border-ink-800/60 rounded-xl p-4 space-y-3 bg-white/50 dark:bg-ink-900/20 shadow-sm">
+                    <div className="flex justify-between items-start gap-2">
+                      <div>
+                        <p className="text-sm font-bold text-ink-900 dark:text-white">{formatDisplayDate(r.date)}</p>
+                        <p className="text-[11px] text-mist-500 font-medium uppercase tracking-wider">{r.userId}</p>
                       </div>
-                      
-                      <div className="space-y-4 text-sm">
-                        <div>
-                          <p className="text-ink-800 dark:text-mist-200 leading-relaxed whitespace-pre-wrap">{r.summary}</p>
-                        </div>
-                        
-                        {r.highlights && (
-                          <div className="bg-amber-50/50 dark:bg-amber-500/5 border border-amber-100 dark:border-amber-500/10 p-3 rounded-xl flex gap-3">
-                            <Star size={16} className="text-amber-500 mt-0.5 shrink-0" />
-                            <div>
-                              <p className="text-xs font-bold text-amber-800 dark:text-amber-500 mb-0.5 uppercase tracking-wider">Highlights</p>
-                              <p className="text-amber-900 dark:text-amber-200/90 leading-relaxed">{r.highlights}</p>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {r.blockers && (
-                          <div className="bg-rose-50/50 dark:bg-rose-500/5 border border-rose-100 dark:border-rose-500/10 p-3 rounded-xl flex gap-3">
-                            <AlertTriangle size={16} className="text-rose-500 mt-0.5 shrink-0" />
-                            <div>
-                              <p className="text-xs font-bold text-rose-800 dark:text-rose-500 mb-0.5 uppercase tracking-wider">Blockers</p>
-                              <p className="text-rose-900 dark:text-rose-200/90 leading-relaxed">{r.blockers}</p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {r.fileUrl && (
-                        <div className="mt-4 pt-4 border-t border-ink-100 dark:border-white/5">
-                          <a
-                            href={r.fileUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-ink-50 hover:bg-ink-100 dark:bg-ink-800/50 dark:hover:bg-ink-800 text-xs font-bold text-blue-700 dark:text-blue-400 transition-colors"
-                          >
-                            {(r.fileName?.match(/\.(jpg|jpeg|png|gif|webp)$/i) || r.fileUrl.match(/\.(jpg|jpeg|png|gif|webp)(\?|$)/i)) ? (
-                              <img src={r.fileUrl} alt="Preview" className="w-6 h-6 object-cover rounded shadow-sm" />
-                            ) : (
-                              <Paperclip size={14} className="text-blue-500" />
-                            )}
-                            <span className="truncate max-w-[200px] sm:max-w-xs">{r.fileName || "View Attachment"}</span>
-                          </a>
-                        </div>
-                      )}
+                      <Badge tone="teal" className="text-[11px] px-2.5 py-1 bg-teal-100 text-teal-800 dark:bg-teal-500/20 dark:text-teal-300 border-0 shrink-0">
+                        {r.tasksCompleted} / {r.tasksPlanned}
+                      </Badge>
                     </div>
-                  </Card>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+                    <p className="text-sm text-ink-800 dark:text-mist-200 leading-relaxed whitespace-pre-wrap">{r.summary}</p>
+                    {r.fileUrl ? (
+                      <a
+                        href={r.fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-ink-50 hover:bg-ink-100 dark:bg-ink-800/50 dark:hover:bg-ink-800 text-xs font-bold text-blue-700 dark:text-blue-400 transition-colors"
+                      >
+                        {(r.fileName?.match(/\.(jpg|jpeg|png|gif|webp)$/i) || r.fileUrl.match(/\.(jpg|jpeg|png|gif|webp)(\?|$)/i)) ? (
+                          <img src={r.fileUrl} alt="Preview" className="w-6 h-6 object-cover rounded shadow-sm" />
+                        ) : (
+                          <Paperclip size={14} className="text-blue-500" />
+                        )}
+                        <span className="truncate max-w-[200px]">{r.fileName || "View Attachment"}</span>
+                      </a>
+                    ) : (
+                      <span className="text-xs text-mist-400">No attachment</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full min-w-160 text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-ink-700/60 text-[11px] text-mist-500 dark:text-mist-400 font-semibold uppercase tracking-wide">
+                      <th className="py-2 pr-2 font-medium">Date</th>
+                      <th className="py-2 pr-2 font-medium">Submitted By</th>
+                      <th className="py-2 pr-2 font-medium">Summary</th>
+                      <th className="py-2 pr-2 font-medium">Tasks</th>
+                      <th className="py-2 pr-2 font-medium">Attachment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredPastReports.map((r) => (
+                      <tr key={r._id} className="border-b border-ink-800/60 last:border-0 hover:bg-ink-800/10 dark:hover:bg-ink-800/30 align-top">
+                        <td className="py-3 pr-2 text-xs font-semibold text-ink-900 dark:text-white whitespace-nowrap">{formatDisplayDate(r.date)}</td>
+                        <td className="py-3 pr-2 text-xs text-mist-500 dark:text-mist-400 uppercase tracking-wide whitespace-nowrap">{r.userId}</td>
+                        <td className="py-3 pr-2 max-w-md text-ink-800 dark:text-mist-200 leading-relaxed whitespace-pre-wrap">{r.summary}</td>
+                        <td className="py-3 pr-2 whitespace-nowrap">
+                          <Badge tone="teal" className="text-[11px] px-2.5 py-1 bg-teal-100 text-teal-800 dark:bg-teal-500/20 dark:text-teal-300 border-0">
+                            {r.tasksCompleted} / {r.tasksPlanned}
+                          </Badge>
+                        </td>
+                        <td className="py-3 pr-2">
+                          {r.fileUrl ? (
+                            <a
+                              href={r.fileUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 text-teal-600 dark:text-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:underline text-xs font-bold"
+                            >
+                              {(r.fileName?.match(/\.(jpg|jpeg|png|gif|webp)$/i) || r.fileUrl.match(/\.(jpg|jpeg|png|gif|webp)(\?|$)/i)) ? (
+                                <img src={r.fileUrl} alt="Preview" className="w-6 h-6 object-cover rounded shadow-sm" />
+                              ) : (
+                                <Paperclip size={14} />
+                              )}
+                              <span className="truncate max-w-[160px]">{r.fileName || "View file"}</span>
+                            </a>
+                          ) : (
+                            <span className="text-xs text-mist-400">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </Card>
         )}
       </div>
     </div>
